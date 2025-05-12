@@ -7,4 +7,4 @@ The codes are written in Mathematica, which are readable using the free Wolfram 
 To use the code, open the .nb notebooks in Mathematica and evaluate all the cells sequentially to obtain the results.
 
 # License
-This work is released under the Creative Commons Attribution 4.0 International (CC BY 4.0) licence. 
+This work is released under the Creative Commons Attribution 4.0 International (CC BY 4.0) license. See https://creativecommons.org/licenses/by/4.0/ 
