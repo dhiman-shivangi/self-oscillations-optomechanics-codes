@@ -1,4 +1,4 @@
-This repository contains a set of Mathematica notebooks that have been used to obtain results for the paper "Self sustained oscillations in a Kerr non-linear electromechanical system". 
+This repository contains a set of Mathematica notebooks that have been used to obtain results for the paper "Self sustained oscillations of a Kerr non-linear optomechanical system". 
 
 # Reading the notebook
 The codes are written in Mathematica, which are readable using the free Wolfram Player (https://www.wolfram.com/player/). The files are provided in pdf format as well to ensure free accessibility.
