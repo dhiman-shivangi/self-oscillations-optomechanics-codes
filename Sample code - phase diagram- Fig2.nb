@@ -1,0 +1,1046 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     41320,       1038]
+NotebookOptionsPosition[     39566,       1001]
+NotebookOutlinePosition[     39960,       1017]
+CellTagsIndexPosition[     39917,       1014]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Phase diagram (stability analysis) for a Kerr modified optomechanical system\
+\>", "Title",
+ CellChangeTimes->{
+  3.955593198695415*^9},ExpressionUUID->"e1ea1102-2e48-4d5d-bc25-\
+08b35afc0030"],
+
+Cell["\<\
+This notebook gives us the stability analysis (phase diagram) for a Kerr \
+modified optomechanical system. We start by defining the equations of motion \
+for our system, and then calculate the fixed points of the system. The fixed \
+points refer to the equilibrium solutions of the equations of motion. Then we \
+obtain the Jacobian of the system and analyse its eigenvalues to determine \
+the stability of the system. The detailed explanation is available in the \
+appendix section \[OpenCurlyDoubleQuote]Self-sustained Oscillations of a \
+Non-linear Optomechanical System in the Low Excitation Regime\
+\[CloseCurlyDoubleQuote].\
+\>", "Text",
+ CellChangeTimes->{
+  3.9555937282391233`*^9, {3.957933693184857*^9, 
+   3.957933735620466*^9}},ExpressionUUID->"136343ca-1de5-47fe-845f-\
+80fc820a2054"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Needs", "[", "\"\<ComputerArithmetic`\>\"", "]"}], 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Package", " ", "required", " ", "to", " ", "use", " ", "NaN"}], 
+    " ", "-", " ", "non", "-", 
+    RowBox[{"representable", " ", "number"}]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], "  ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Clears", " ", "all", " ", "previously", " ", "defined", " ", 
+    "variables"}], "*)"}]}]}], "Input",
+ CellChangeTimes->{
+  3.955593217804019*^9},ExpressionUUID->"7ce5c073-0bcd-45ae-9b91-\
+8a93db0a9d03"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+System parameters - Here we will define all the system parameters\
+\>", "Subsection",
+ CellChangeTimes->{{3.955593242892131*^9, 
+  3.955593259259302*^9}},ExpressionUUID->"2963c191-d6d7-4a4e-b4e0-\
+50aa336fbe98"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Omega]m", "=", 
+    RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+     RowBox[{"10", "^", "6"}]}]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{"Mechanical", " ", "frequency", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "will", " ", "be", " ", "used", " ", "to", " ", "normalise", " ", "all", 
+      " ", "other", " ", "varaibles"}], ")"}]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Gamma]", "=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "11.7"}], ")"}], "/", 
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "5.606456", "*", 
+       RowBox[{"10", "^", "6"}]}], ")"}]}]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Mechanical", " ", "damping", " ", "rate", " ", "normlised", " ", "with", 
+    " ", "respect", " ", "to", " ", "mechanical", " ", "frequency", " ", 
+    SubscriptBox["\[Omega]", "m"]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{" ", 
+  RowBox[{
+   RowBox[{"\[CapitalOmega]", "=", 
+    FractionBox[
+     RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+      RowBox[{"10", "^", "6"}]}], 
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+       RowBox[{"10", "^", "6"}]}], ")"}]]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Normalised", " ", "mechanical", " ", 
+     RowBox[{"frequency", " ", "~", " ", "\[CapitalOmega]"}]}], "=", "1"}], 
+   " ", "*)"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Kappa]e", "=", 
+    FractionBox[
+     RowBox[{"2", "*", "Pi", "*", "1.636293", "*", 
+      RowBox[{"10", "^", "6"}]}], 
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+       RowBox[{"10", "^", "6"}]}], ")"}]]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Cavity", " ", "decay", " ", "rate", " ", "associated", " ", "with", " ", 
+    "external", " ", "losses", " ", "normalised", " ", "with", " ", "respect",
+     " ", "to", " ", 
+    SubscriptBox["\[Omega]", "m"]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Kappa]int", "=", 
+    FractionBox[
+     RowBox[{"2", "*", "Pi", "*", "0.675812", "*", 
+      RowBox[{"10", "^", "6"}]}], 
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+       RowBox[{"10", "^", "6"}]}], ")"}]]}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{
+   "Internal", " ", "cavity", " ", "decay", " ", "rate", " ", "normalised", 
+    " ", "with", " ", "respect", " ", "to", " ", 
+    SubscriptBox["\[Omega]", "m"]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Kappa]", "=", 
+    RowBox[{"\[Kappa]e", "+", "\[Kappa]int"}]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Total", " ", "cavity", " ", "decay", " ", "rate", " ", "given", " ", "by",
+     " ", "sum", " ", "of", " ", "external", " ", "and", " ", "internal", " ",
+     "decay", " ", 
+    RowBox[{"rate", "."}]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"g0", "=", 
+    FractionBox[
+     RowBox[{"2", "*", "Pi", "*", "4.691", "*", 
+      RowBox[{"10", "^", "3"}]}], 
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+       RowBox[{"10", "^", "6"}]}], ")"}]]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Optomechanical", " ", "coupling", " ", "strength", " ", "normalised", " ",
+     "with", " ", 
+    SubscriptBox["\[Omega]", "m"]}], "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Kerr", "=", 
+    FractionBox[
+     RowBox[{"2", "*", "Pi", "*", "0.07", "*", 
+      RowBox[{"10", "^", "6"}]}], 
+     RowBox[{"(", 
+      RowBox[{"2", "*", "Pi", "*", "5.607483", "*", 
+       RowBox[{"10", "^", "6"}]}], ")"}]]}], ";"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Kerr", " ", "non"}], "-", 
+    RowBox[{
+    "linearity", " ", "associated", " ", "with", " ", "the", " ", "cavity", 
+     " ", "mode", " ", "normalised", " ", "with", " ", "respect", " ", "to", 
+     " ", "mechanical", " ", "frequency", " ", 
+     RowBox[{
+      SubscriptBox["\[Omega]", "m"], " ", ".", " ", "This"}], " ", "can", " ",
+      "be", " ", "set", " ", "to", " ", "zero", " ", "to", " ", "obtain", " ",
+      "the", " ", "phase", " ", "diagram", " ", "of", " ", "a", " ", 
+     "standard", " ", "optomechanical", " ", "system", " ", "without", " ", 
+     "the", " ", "additional", " ", "Kerr", " ", "non"}], "-", 
+    RowBox[{"linearity", "."}]}], "*)"}], "\n", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Kerreff", "=", 
+    RowBox[{"Kerr", "+", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"2", " ", 
+        RowBox[{"g0", "^", "2"}], " ", "\[CapitalOmega]"}], ")"}], "/", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"\[CapitalOmega]", "^", "2"}], "+", 
+        RowBox[{
+         RowBox[{"\[Gamma]", "^", "2"}], "/", "4"}]}], ")"}]}]}]}], ";"}], 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Effective", " ", "Kerr", " ", "non"}], "-", 
+    RowBox[{
+    "linearity", " ", "given", " ", "by", " ", "the", " ", "sum", " ", "of", 
+     " ", "cavity", " ", "kerr", " ", "and", " ", "the", " ", "nonlinearity", 
+     " ", "associated", " ", "with", " ", "the", " ", "optomechanical", " ", 
+     RowBox[{"interaction", "."}]}]}], " ", "*)"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nincrit", "=", 
+   RowBox[{"2", "*", 
+    RowBox[{
+     RowBox[{"\[Kappa]", "^", "3"}], "/", 
+     RowBox[{"(", 
+      RowBox[{"3", " ", 
+       RowBox[{"Sqrt", "[", "3", "]"}], " ", "\[Kappa]e", " ", "Kerreff"}], 
+      ")"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Critical", " ", "input", " ", "power", " ", 
+      SubscriptBox["n", "crit"], " ", "which", " ", "is", " ", "the", " ", 
+      "input", " ", "power", " ", "at", " ", "which", " ", "the", " ", 
+      "system", " ", "becomes", " ", 
+      RowBox[{"bistable", ".", " ", "Since"}], " ", "we", " ", "have", " ", 
+      "a", " ", "non"}], "-", 
+     RowBox[{"zero", " ", "Kerr", " ", "non"}], "-", "linearity"}], ",", " ", 
+    
+    RowBox[{"beyond", " ", 
+     SubscriptBox["n", "crit"], " ", "the", " ", "system", " ", "enters", " ",
+      "a", " ", "regime", " ", "with", " ", "three", " ", "possible", " ", 
+     "solutions", " ", "for", " ", "the", " ", "photon", " ", 
+     RowBox[{"number", ".", " ", "It"}], " ", "is", " ", "qualitatively", " ",
+      "similar", " ", "to", " ", "the", " ", "three", " ", "photon", " ", 
+     "branches", " ", "of", " ", "a", " ", "Kerr", " ", 
+     RowBox[{"resonator", "."}]}]}], "*)"}]}]}], "Input",
+ CellChangeTimes->{
+  3.9555932802894373`*^9, {3.955965152053566*^9, 
+   3.955965157575734*^9}},ExpressionUUID->"621c350c-98aa-43b2-83b2-\
+50874f1bd399"],
+
+Cell[TextData[{
+ "Note - If we want to generate the phase diagram of a standard \
+optomechanical system, i.e. take the Kerr = 0, then the ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["n", "crit"], TraditionalForm]],
+  FormatType->TraditionalForm,ExpressionUUID->
+  "afe5b529-4aa8-4a2f-8025-7c7cd236690e"],
+ "denoted by \[OpenCurlyDoubleQuote]nincrit\[CloseCurlyDoubleQuote] will also \
+change since it depends on the Kerr non-linearity. "
+}], "Text",
+ CellChangeTimes->{{3.955593299161772*^9, 
+  3.955593442748103*^9}},ExpressionUUID->"23e75eb3-c28c-4cac-8fd0-\
+b2f3550f87cd"],
+
+Cell[BoxData[
+ RowBox[{"(*", 
+  RowBox[{"Kerr", "=", "0"}], "*)"}]], "Input",
+ CellChangeTimes->{{3.955593453430429*^9, 
+  3.9555934656066017`*^9}},ExpressionUUID->"d484cf56-599a-4c0a-a078-\
+8df10f25edba"],
+
+Cell["\<\
+ If we want the input power to be the same and defined with respect to \
+non-zero Kerr, then the above command should be uncommented.\
+\>", "Text",
+ CellChangeTimes->{{3.955593476922165*^9, 
+  3.9555935685177*^9}},ExpressionUUID->"e934cb4f-a7d5-4ce1-b89d-23a7da20f36c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Defining a function that determines the number of fixed points and their \
+stability \
+\>", "Subsection",
+ CellChangeTimes->{{3.9555935874645567`*^9, 3.955593593365075*^9}, {
+  3.955593632573307*^9, 
+  3.955593644700201*^9}},ExpressionUUID->"5844f418-8bac-466f-b6bc-\
+6dbc9ae156e5"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"--", 
+     RowBox[{"--", 
+      RowBox[{"--", 
+       RowBox[{"--", 
+        RowBox[{"--", "Start"}]}]}]}]}], " ", "of", " ", 
+    RowBox[{"function", " ", ":", " ", 
+     RowBox[{
+      RowBox[{"Fixed", " ", "point", " ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"function", " ", "--"}], "--"}], "--"}], "--"}]}], 
+      "-"}]}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Here", " ", "we", " ", "define", " ", "a", " ", "function", " ", "that", 
+    " ", "calculates", " ", "the", " ", "fixed", " ", "points", " ", "of", 
+    " ", "the", " ", "system", " ", "and", " ", "determines", " ", "its", " ",
+     "stability", " ", "for", " ", "different", " ", "values", " ", "of", " ",
+     "detuning", " ", "\[Delta]", " ", "and", " ", "input", " ", "power", " ", 
+    RowBox[{"nin", "."}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"fixedpointevo", "[", 
+      RowBox[{"\[Delta]_", ",", "nin_"}], "]"}], ":=", 
+     RowBox[{"(", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", "Equations"}]}]}], " ", "of", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"motion", " ", "--"}], "--"}], "--"}]}], "-"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{
+        "Define", " ", "the", " ", "equations", " ", "of", " ", "motion", " ",
+          "for", " ", 
+         SubscriptBox["\[Alpha]", "r"]}], ",", 
+        SubscriptBox["\[Alpha]", "i"], ",", 
+        SubscriptBox["\[Beta]", "r"], ",", 
+        RowBox[{
+         RowBox[{
+          SubscriptBox["\[Beta]", "i"], ".", " ", "Here"}], " ", 
+         SubscriptBox["\[Alpha]", "r"], 
+         RowBox[{"(", 
+          SubscriptBox["\[Beta]", "r"], ")"}], " ", "and", " ", 
+         SubscriptBox["\[Alpha]", "i"], 
+         RowBox[{"(", 
+          SubscriptBox["\[Beta]", "i"], ")"}], " ", "are", " ", "the", " ", 
+         "real", " ", "and", " ", "imaginary", " ", "part", " ", "of", " ", 
+         "the", " ", "cavity", " ", 
+         RowBox[{"(", "mechanical", ")"}], " ", "mode", " ", 
+         RowBox[{"respectively", ".", " ", "We"}], " ", "set", " ", "the", 
+         " ", "right", " ", "hand", " ", "side", " ", "of", " ", "the", " ", 
+         "equations", " ", "of", " ", "motion", " ", "to", " ", "be", " ", 
+         "equal", " ", "to", " ", "zero"}], ",", " ", 
+        RowBox[{
+        "so", " ", "that", " ", "we", " ", "can", " ", "obtain", " ", "the", 
+         " ", "steady", " ", "state", " ", "or", " ", "equilibrium", " ", 
+         RowBox[{"solutions", ".", " ", "These"}], " ", "solutions", " ", 
+         "are", " ", "referred", " ", "to", " ", "as", " ", "fixed", " ", 
+         "points", " ", "of", " ", "the", " ", 
+         RowBox[{"system", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"eqns", "=", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"-", "\[Delta]"}], " ", 
+             RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "-", " ", 
+            RowBox[{
+             FractionBox["\[Kappa]", "2"], " ", 
+             RowBox[{"\[Alpha]R", "[", "t", "]"}]}], " ", "-", " ", 
+            RowBox[{"Kerr", " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"\[Alpha]R", "[", "t", "]"}], "^", "2"}], "+", 
+               RowBox[{
+                RowBox[{"\[Alpha]I", "[", "t", "]"}], "^", "2"}]}], ")"}], 
+             " ", 
+             RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "+", " ", 
+            RowBox[{"2", " ", "g0", " ", 
+             RowBox[{"\[Beta]R", "[", "t", "]"}], " ", 
+             RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "-", " ", 
+            RowBox[{
+             RowBox[{"Sqrt", "[", 
+              FractionBox["\[Kappa]e", "2"], "]"}], " ", 
+             RowBox[{"Sqrt", "[", 
+              RowBox[{"nin", "*", "nincrit"}], "]"}]}]}], "==", "0"}], ",", 
+          " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[Delta]", " ", 
+             RowBox[{"\[Alpha]R", "[", "t", "]"}]}], " ", "-", " ", 
+            RowBox[{
+             FractionBox["\[Kappa]", "2"], " ", 
+             RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "+", " ", 
+            RowBox[{"Kerr", " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"\[Alpha]R", "[", "t", "]"}], "^", "2"}], "+", 
+               RowBox[{
+                RowBox[{"\[Alpha]I", "[", "t", "]"}], "^", "2"}]}], ")"}], 
+             " ", 
+             RowBox[{"\[Alpha]R", "[", "t", "]"}]}], "-", 
+            RowBox[{"2", " ", "g0", " ", 
+             RowBox[{"\[Beta]R", "[", "t", "]"}], " ", 
+             RowBox[{"\[Alpha]R", "[", "t", "]"}]}]}], "==", "0"}], ",", " ", 
+          
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[CapitalOmega]", " ", 
+             RowBox[{"\[Beta]I", "[", "t", "]"}]}], " ", "-", " ", 
+            RowBox[{
+             FractionBox["\[Gamma]", "2"], " ", 
+             RowBox[{"\[Beta]R", "[", "t", "]"}]}]}], "==", "0"}], ",", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"-", "\[CapitalOmega]"}], " ", 
+             RowBox[{"\[Beta]R", "[", "t", "]"}]}], " ", "-", " ", 
+            RowBox[{
+             FractionBox["\[Gamma]", "2"], " ", 
+             RowBox[{"\[Beta]I", "[", "t", "]"}]}], " ", "-", "  ", 
+            RowBox[{"g0", " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"\[Alpha]R", "[", "t", "]"}], "^", "2"}], "+", 
+               RowBox[{
+                RowBox[{"\[Alpha]I", "[", "t", "]"}], "^", "2"}]}], ")"}]}]}],
+            "==", "0"}]}], " ", "}"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"-", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Jacobian", "--"}], "--"}], "--"}], "--"}]}]}]}]}]}],
+          "-"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Here", " ", "we", " ", "use", " ", "only", " ", "the", " ", "left", 
+         " ", "hand", " ", "side", " ", "of", " ", "the", " ", "equations", 
+         " ", "defined", " ", "above", " ", "which", " ", "will", " ", "be", 
+         " ", "used", " ", "to", " ", "calculate", " ", "the", " ", 
+         "Jacobian", " ", "of", " ", "the", " ", 
+         RowBox[{"system", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"rhs", "=", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"-", "\[Delta]"}], " ", 
+            RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "-", " ", 
+           RowBox[{
+            FractionBox["\[Kappa]", "2"], " ", 
+            RowBox[{"\[Alpha]R", "[", "t", "]"}]}], " ", "-", " ", 
+           RowBox[{"Kerr", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"\[Alpha]R", "[", "t", "]"}], "^", "2"}], "+", 
+              RowBox[{
+               RowBox[{"\[Alpha]I", "[", "t", "]"}], "^", "2"}]}], ")"}], " ", 
+            RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "+", " ", 
+           RowBox[{"2", " ", "g0", " ", 
+            RowBox[{"\[Beta]R", "[", "t", "]"}], " ", 
+            RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "-", " ", 
+           RowBox[{
+            RowBox[{"Sqrt", "[", 
+             FractionBox["\[Kappa]e", "2"], "]"}], " ", 
+            RowBox[{"Sqrt", "[", 
+             RowBox[{"nin", "*", "nincrit"}], "]"}]}]}], ",", " ", 
+          RowBox[{
+           RowBox[{"\[Delta]", " ", 
+            RowBox[{"\[Alpha]R", "[", "t", "]"}]}], " ", "-", " ", 
+           RowBox[{
+            FractionBox["\[Kappa]", "2"], " ", 
+            RowBox[{"\[Alpha]I", "[", "t", "]"}]}], " ", "+", " ", 
+           RowBox[{"Kerr", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"\[Alpha]R", "[", "t", "]"}], "^", "2"}], "+", 
+              RowBox[{
+               RowBox[{"\[Alpha]I", "[", "t", "]"}], "^", "2"}]}], ")"}], " ", 
+            RowBox[{"\[Alpha]R", "[", "t", "]"}]}], "-", 
+           RowBox[{"2", " ", "g0", " ", 
+            RowBox[{"\[Beta]R", "[", "t", "]"}], " ", 
+            RowBox[{"\[Alpha]R", "[", "t", "]"}]}]}], ",", " ", 
+          RowBox[{
+           RowBox[{"\[CapitalOmega]", " ", 
+            RowBox[{"\[Beta]I", "[", "t", "]"}]}], " ", "-", " ", 
+           RowBox[{
+            FractionBox["\[Gamma]", "2"], " ", 
+            RowBox[{"\[Beta]R", "[", "t", "]"}]}]}], ",", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"-", "\[CapitalOmega]"}], " ", 
+            RowBox[{"\[Beta]R", "[", "t", "]"}]}], " ", "-", " ", 
+           RowBox[{
+            FractionBox["\[Gamma]", "2"], " ", 
+            RowBox[{"\[Beta]I", "[", "t", "]"}]}], " ", "-", "  ", 
+           RowBox[{"g0", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"\[Alpha]R", "[", "t", "]"}], "^", "2"}], "+", 
+              RowBox[{
+               RowBox[{"\[Alpha]I", "[", "t", "]"}], "^", "2"}]}], 
+             ")"}]}]}]}], " ", "}"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"--", 
+                 RowBox[{"--", 
+                  RowBox[{"--", 
+                   RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", "--"}]}]}]}]}]}]}]}]}]}]}]}]}]}], "*)"}], 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"equilibriumPoints", " ", "=", 
+        RowBox[{"NSolve", "[", 
+         RowBox[{"eqns", ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"\[Alpha]R", "[", "t", "]"}], ",", 
+            RowBox[{"\[Alpha]I", "[", "t", "]"}], ",", 
+            RowBox[{"\[Beta]R", "[", "t", "]"}], ",", 
+            RowBox[{"\[Beta]I", "[", "t", "]"}]}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Obtain", " ", "the", " ", "solutions", " ", "for", " ", "the", " ", 
+         "fixed", " ", "points", " ", "using", " ", "the", " ", "system", " ",
+          "of", " ", "equations", " ", "defined", " ", "as", " ", 
+         RowBox[{"\"\<eqns\>\"", "."}]}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"\[Beta]Rlist", "=", 
+        RowBox[{
+         RowBox[{"\[Beta]R", "[", "t", "]"}], "/.", "equilibriumPoints"}]}], 
+       ";", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Obtain", " ", "the", " ", "fixed", " ", "point", " ", 
+         "corresponding", " ", "to", " ", "the", " ", "displacement", " ", 
+         "of", " ", "the", " ", "mechanical", " ", "mode"}], "*)"}], 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"jacobianMatrix", "=", 
+        RowBox[{"D", "[", 
+         RowBox[{"rhs", ",", 
+          RowBox[{"{", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"\[Alpha]R", "[", "t", "]"}], ",", 
+             RowBox[{"\[Alpha]I", "[", "t", "]"}], ",", 
+             RowBox[{"\[Beta]R", "[", "t", "]"}], ",", 
+             RowBox[{"\[Beta]I", "[", "t", "]"}]}], "}"}], "}"}]}], "]"}]}], 
+       ";", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Here", " ", "we", " ", "calculate", " ", "the", " ", "Jacobian", " ",
+          "of", " ", "the", " ", 
+         RowBox[{"system", "."}]}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"-", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Eigenvalues", "--"}], "--"}], "--"}]}]}]}]}], "-"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "The", " ", "following", " ", "function", " ", "gives", " ", "us", 
+         " ", "the", " ", "eigenvalues", " ", "of", " ", "the", " ", 
+         "Jacobian", " ", "matrix", " ", "for", " ", "a", " ", "given", " ", 
+         "fixed", " ", "point", " ", "represented", " ", "as", " ", 
+         RowBox[{"\"\<point\>\"", "."}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"calculateEigenvalues", "[", "point_", "]"}], ":=", 
+        RowBox[{"Eigenvalues", "[", 
+         RowBox[{"jacobianMatrix", "/.", "point"}], "]"}]}], ";", "\n", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"eigenvaluesList", "=", 
+        RowBox[{"calculateEigenvalues", "/@", "equilibriumPoints"}]}], ";", 
+       RowBox[{"(*", 
+        RowBox[{
+        "We", " ", "calculate", " ", "the", " ", "eigenvalues", " ", "for", 
+         " ", "all", " ", "the", " ", "different", " ", "fixed", " ", 
+         "points", " ", "obtained", " ", "by", " ", "solving", " ", "the", 
+         " ", "equations", " ", "of", " ", 
+         RowBox[{"motion", "."}]}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", 
+              RowBox[{"-", "Check"}]}]}]}]}], " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{"stability", "--"}], "--"}], "--"}], "--"}]}], "-"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"We", " ", "define", " ", "two", " ", "functions"}], " ", 
+         ",", " ", 
+         RowBox[{
+         "\"\<isStable\>\"", " ", "and", " ", "\"\<isnotStable\>\"", " ", 
+          "which", " ", "determine", " ", "the", " ", "stability", " ", "of", 
+          " ", "a", " ", "fixed", " ", 
+          RowBox[{"point", ".", " ", "The"}], " ", "fixed", " ", "point", " ",
+           "is", " ", "stable", " ", "if", " ", "the", " ", "real", " ", 
+          "part", " ", "of", " ", "all", " ", "the", " ", "eigenvalues", " ", 
+          "is", " ", "negative"}], ",", " ", 
+         RowBox[{"otherwise", " ", "it", " ", "is", " ", 
+          RowBox[{"unstable", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"isStable", "[", "point_", "]"}], ":=", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"AllTrue", "[", 
+           RowBox[{
+            RowBox[{"Re", "[", 
+             RowBox[{"Eigenvalues", "[", 
+              RowBox[{"jacobianMatrix", "/.", " ", "point"}], "]"}], "]"}], 
+            ",", 
+            RowBox[{
+             RowBox[{"#", "<", "0"}], "&"}]}], "]"}], ",", "1", ",", "NaN"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"isnotStable", "[", "p_", "]"}], ":=", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"AllTrue", "[", 
+           RowBox[{
+            RowBox[{"Re", "[", 
+             RowBox[{"Eigenvalues", "[", 
+              RowBox[{"jacobianMatrix", "/.", " ", "p"}], "]"}], "]"}], ",", 
+            RowBox[{
+             RowBox[{"#", "<", "0"}], "&"}]}], "]"}], ",", "NaN", ",", "1"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "We", " ", "create", " ", "a", " ", "list", " ", "of", " ", "the", 
+         " ", "stable", " ", "and", " ", "unstable", " ", "solutions", " ", 
+         "using", " ", "our", " ", "stability", " ", "determining", " ", 
+         RowBox[{"functions", "."}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"stabilityList", "=", 
+        RowBox[{"isStable", "/@", "equilibriumPoints"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"notstableList", "=", 
+        RowBox[{"isnotStable", "/@", "equilibriumPoints"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+         "Since", " ", "we", " ", "can", " ", "only", " ", "plot", " ", "one",
+           " ", "fixed", " ", "point", " ", "as", " ", "a", " ", "function", 
+          " ", "of", " ", "the", " ", "parameters"}], ",", " ", 
+         RowBox[{
+         "we", " ", "create", " ", "two", " ", "lists", " ", "of", " ", "the",
+           " ", "fixed", " ", "point", " ", "corresponding", " ", "to", " ", 
+          "the", " ", "position", " ", "of", " ", "the", " ", "mechanical", 
+          " ", "mode"}], ",", " ", 
+         RowBox[{
+         "one", " ", "containing", " ", "the", " ", "stable", " ", "solution",
+           " ", "and", " ", "the", " ", "other", " ", "containing", " ", 
+          "the", " ", "unstable", " ", 
+          RowBox[{"solution", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"\[Beta]Rliststable", " ", "=", " ", 
+        RowBox[{"\[Beta]Rlist", " ", "*", "stabilityList"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"\[Beta]Rlistunstable", "=", " ", 
+        RowBox[{"\[Beta]Rlist", "*", "notstableList"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", "Additional"}]}]}]}], " ", "checks", " ", "to", 
+          " ", "remove", " ", "duplicate", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"solutions", "--"}], "--"}], "--"}]}], "-"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"\[Beta]Rlist", "=", 
+        RowBox[{"DeleteDuplicates", "[", 
+         RowBox[{"\[Beta]Rlist", ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Abs", "[", 
+             RowBox[{"#1", "-", "#2"}], "]"}], "<", 
+            RowBox[{"10", "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "20"}], ")"}]}]}], "&"}]}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"\[Beta]Rliststable", "=", 
+        RowBox[{"DeleteDuplicates", "[", 
+         RowBox[{"\[Beta]Rliststable", ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Abs", "[", 
+             RowBox[{"#1", "-", "#2"}], "]"}], "<", 
+            RowBox[{"10", "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "20"}], ")"}]}]}], "&"}]}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"\[Beta]Rlistunstable", "=", 
+        RowBox[{"DeleteDuplicates", "[", 
+         RowBox[{"\[Beta]Rlistunstable", ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Abs", "[", 
+             RowBox[{"#1", "-", "#2"}], "]"}], "<", 
+            RowBox[{"10", "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "20"}], ")"}]}]}], "&"}]}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"--", 
+         RowBox[{"--", 
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", 
+              RowBox[{"--", 
+               RowBox[{"--", 
+                RowBox[{"--", 
+                 RowBox[{"--", 
+                  RowBox[{"--", 
+                   RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{"--", 
+                    RowBox[{
+                    "--", "-"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}\
+]}]}]}]}]}], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"--", 
+           RowBox[{"--", 
+            RowBox[{"--", 
+             RowBox[{"--", "Count"}]}]}]}], " ", "number", " ", "of", " ", 
+          "solutions"}], ",", " ", 
+         RowBox[{"number", " ", "of", " ", "stable", " ", "solutions"}], ",", 
+         " ", 
+         RowBox[{
+          RowBox[{"and", " ", "number", " ", "of", " ", "unstable", " ", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"solutions", " ", "--"}], "--"}], "--"}], "--"}], 
+                    "--"}], "--"}], "--"}], "--"}], "--"}], "--"}], "--"}], 
+              "--"}], "--"}], "--"}]}], "-"}]}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"listcount", "=", 
+        RowBox[{"Count", "[", 
+         RowBox[{"\[Beta]Rlist", ",", "_Real"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"listcountstable", "=", 
+        RowBox[{"Count", "[", 
+         RowBox[{"\[Beta]Rliststable", ",", "_Real"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"listcountunstable", "=", 
+        RowBox[{"Count", "[", 
+         RowBox[{"\[Beta]Rlistunstable", ",", "_Real"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{
+        "listcount", ",", "listcountstable", ",", "listcountunstable"}], 
+        "}"}]}], ")"}]}], ";"}], 
+   RowBox[{"(*", 
+    RowBox[{
+    "This", " ", "function", " ", "returns", " ", "us", " ", "the", " ", 
+     "number", " ", "of", " ", "solutions", " ", "for", " ", "the", " ", 
+     "fixed", " ", "points", " ", "which", " ", "can", " ", "either", " ", 
+     "be", " ", "1", " ", "or", " ", "3", " ", "depending", " ", "on", " ", 
+     "the", " ", 
+     RowBox[{"parameters", ".", " ", "Further"}], " ", "it", " ", "tells", 
+     " ", "us", " ", "how", " ", "many", " ", "of", " ", "those", " ", 
+     "solutions", " ", "are", " ", 
+     RowBox[{"stable", "/", 
+      RowBox[{"unstable", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"--", 
+      RowBox[{"--", 
+       RowBox[{"--", 
+        RowBox[{"--", 
+         RowBox[{"--", "End"}]}]}]}]}], " ", "of", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"function", "--"}], "--"}], "--"}], "--"}], "--"}], 
+      "--"}]}], "*)"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.9555936158666143`*^9, 3.955964855419536*^9, {3.9559649111535883`*^9, 
+   3.955964948988665*^9}},ExpressionUUID->"a8bb9e92-36b6-4e8a-8e18-\
+87dfc3e7a87c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calling the function", "Subsection",
+ CellChangeTimes->{{3.955593670562961*^9, 
+  3.955593677323996*^9}},ExpressionUUID->"839d4554-3f39-4590-bc82-\
+8237bed9f21e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"d1p3", "=", 
+    RowBox[{"ParallelTable", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"k", ",", "l", ",", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"fixedpointevo", "[", 
+            RowBox[{"k", ",", "l"}], "]"}], "[", 
+           RowBox[{"[", "3", "]"}], "]"}], ")"}], "+", 
+         RowBox[{"2", "*", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"fixedpointevo", "[", 
+             RowBox[{"k", ",", "l"}], "]"}], "[", 
+            RowBox[{"[", "2", "]"}], "]"}], ")"}]}]}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"k", ",", 
+        RowBox[{"-", "2"}], ",", "2", ",", "0.01"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"l", ",", "0.001", ",", "4", ",", "0.01"}], "}"}]}], "]"}]}], 
+   ";"}], 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Obtain", " ", "a", " ", 
+     RowBox[{"(", 
+      RowBox[{"x", ",", "y", ",", "z"}], ")"}], " ", "list", " ", "where", 
+     " ", "x", " ", "corresponds", " ", "to", " ", "the", " ", "detuning"}], 
+    ",", " ", 
+    RowBox[{
+    "y", " ", "corresponds", " ", "to", " ", "the", " ", "input", " ", 
+     "power"}], ",", " ", 
+    RowBox[{
+    "and", " ", "z", " ", "gives", " ", "a", " ", "unique", " ", "number", 
+     " ", "that", " ", "tells", " ", "us", " ", "about", " ", "the", " ", 
+     "number", " ", "of", " ", "stable", " ", "and", " ", "unstable", " ", 
+     "solutions", " ", "for", " ", "the", " ", "fixed", " ", 
+     RowBox[{"points", ".", " ", "Here"}], " ", "0", "corresponds", " ", "to",
+      " ", "single", " ", "stable", " ", "fixed", " ", "point"}], ",", " ", 
+    RowBox[{
+    "1", " ", "corresponds", " ", "to", " ", "Single", " ", "unstable", " ", 
+     "fixed", " ", "point"}], ",", " ", 
+    RowBox[{
+    "2", " ", "corresponds", " ", "to", " ", "single", " ", "stable", " ", 
+     "fixed", " ", "point"}], ",", 
+    RowBox[{
+    "4", " ", "corresponds", " ", "to", " ", "single", " ", "stable", " ", 
+     "and", " ", "two", " ", "unstable", " ", "fixed", " ", "points", " ", 
+     "and", " ", "5", " ", "corresponds", " ", "to", " ", "two", " ", 
+     "stable", " ", "and", " ", "one", " ", "unstable", " ", "fixed", " ", 
+     RowBox[{"point", ".", " ", "Note"}], " ", "that", " ", "3", " ", "does", 
+     " ", "not", " ", "correspond", " ", "to", " ", "any", " ", 
+     RowBox[{"case", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"--", 
+     RowBox[{"--", "Obtain"}]}], " ", "a", " ", "density", " ", "map", " ", 
+    "to", " ", "show", " ", "different", " ", 
+    RowBox[{
+     RowBox[{"regions", "--"}], "--"}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ListDensityPlot", "[", 
+   RowBox[{
+    RowBox[{"Flatten", "[", 
+     RowBox[{"d1p3", ",", "1"}], "]"}], ",", 
+    RowBox[{"PlotRange", "->", "All"}], ",", 
+    RowBox[{"PlotLegends", "->", "Automatic"}], ",", 
+    RowBox[{"ScalingFunctions", "->", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Linear\>\"", ",", "\"\<Linear\>\"", ",", "\"\<Linear\>\""}], 
+      "}"}]}], ",", 
+    RowBox[{"ColorFunction", "->", "\"\<AlpineColors\>\""}], ",", 
+    RowBox[{"BaseStyle", "->", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"FontSize", "->", "16"}], ",", 
+       RowBox[{"FontFamily", "->", "\"\<Sans Serif Collection\>\""}]}], 
+      "}"}]}], ",", 
+    RowBox[{"LabelStyle", "->", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"FontSize", "->", "16"}], "]"}]}], ",", 
+    RowBox[{"Axes", "->", "False"}], ",", 
+    RowBox[{"ImageSize", "->", "Large"}], ",", 
+    RowBox[{"FrameTicksStyle", "->", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Black", ",", "20", ",", "Thin"}], "]"}]}], ",", 
+    RowBox[{"FrameLabel", "->", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\< \[CapitalDelta]/\!\(\*SubscriptBox[\(\[CapitalOmega]\), \
+\(m\)]\)\>\"", ",", 
+       "\"\<\!\(\*SubscriptBox[\(n\), \(in\)]\)/\!\(\*SubscriptBox[\(n\), \
+\(crit\)]\)\>\""}], "}"}]}]}], "]"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Export", "[", 
+   RowBox[{"\"\<sample-phase-dia\>\"", ",", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{"d1p3", ",", "1"}], "]"}], ",", "\"\<CSV\>\""}], "]"}], 
+  RowBox[{"(*", 
+   RowBox[{
+   "To", " ", "export", " ", "the", " ", "generated", " ", "table", " ", "in",
+     " ", "the", " ", "form", " ", "of", " ", "a", " ", "CSV", " ", 
+    RowBox[{"file", "."}]}], "*)"}]}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{
+  3.955593693891945*^9, {3.955593834539466*^9, 3.95559385701412*^9}, {
+   3.955964971230885*^9, 3.955964996070212*^9}, {3.955965075277276*^9, 
+   3.95596507982451*^9}},ExpressionUUID->"fe3cc79c-cc30-471b-ba70-\
+00f1e9c09c2d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["End of notebook", "Subsection",
+ CellChangeTimes->{{3.955593703087821*^9, 
+  3.955593705535928*^9}},ExpressionUUID->"0bb9f036-c436-4c96-825d-\
+1f61c2aa6e88"],
+
+Cell["\<\
+Note : - To generate phase diagrams for different parameters, the system \
+parameters can be changed. The Kerr nonlinearity can be set to zero to obtain \
+the plot for a standard optomechanical system without additional \
+non-linearity. The parameters used here are the same as Figure 2 of the \
+paper. \
+\>", "Text",
+ CellChangeTimes->{
+  3.9555937590409327`*^9, {3.9559650280671997`*^9, 3.955965063322688*^9}, {
+   3.955965166944189*^9, 
+   3.955965178244195*^9}},ExpressionUUID->"78bda335-6e3c-496c-a629-\
+740f4c9d7063"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{Full, Full},
+WindowMargins->{{Automatic, 0}, {51, Automatic}},
+FrontEndVersion->"13.1 for Mac OS X ARM (64-bit) (June 16, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"b67b49d4-6448-41f3-93a2-63ba429df0d3"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 203, 5, 98, "Title",ExpressionUUID->"e1ea1102-2e48-4d5d-bc25-08b35afc0030"],
+Cell[786, 29, 807, 14, 81, "Text",ExpressionUUID->"136343ca-1de5-47fe-845f-80fc820a2054"],
+Cell[1596, 45, 642, 17, 73, "Input",ExpressionUUID->"7ce5c073-0bcd-45ae-9b91-8a93db0a9d03"],
+Cell[CellGroupData[{
+Cell[2263, 66, 221, 5, 54, "Subsection",ExpressionUUID->"2963c191-d6d7-4a4e-b4e0-50aa336fbe98"],
+Cell[2487, 73, 6866, 177, 650, "Input",ExpressionUUID->"621c350c-98aa-43b2-83b2-50874f1bd399"],
+Cell[9356, 252, 576, 13, 35, "Text",ExpressionUUID->"23e75eb3-c28c-4cac-8fd0-b2f3550f87cd"],
+Cell[9935, 267, 205, 5, 30, "Input",ExpressionUUID->"d484cf56-599a-4c0a-a078-8df10f25edba"],
+Cell[10143, 274, 279, 5, 35, "Text",ExpressionUUID->"e934cb4f-a7d5-4ce1-b89d-23a7da20f36c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10459, 284, 292, 7, 54, "Subsection",ExpressionUUID->"5844f418-8bac-466f-b6bc-6dbc9ae156e5"],
+Cell[10754, 293, 23081, 559, 1426, "Input",ExpressionUUID->"a8bb9e92-36b6-4e8a-8e18-87dfc3e7a87c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33872, 857, 168, 3, 54, "Subsection",ExpressionUUID->"839d4554-3f39-4590-bc82-8237bed9f21e"],
+Cell[34043, 862, 4759, 114, 304, "Input",ExpressionUUID->"fe3cc79c-cc30-471b-ba70-00f1e9c09c2d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[38839, 981, 163, 3, 54, "Subsection",ExpressionUUID->"0bb9f036-c436-4c96-825d-1f61c2aa6e88"],
+Cell[39005, 986, 533, 11, 58, "Text",ExpressionUUID->"78bda335-6e3c-496c-a629-740f4c9d7063"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
