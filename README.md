@@ -12,8 +12,8 @@ You can change the parameters in the code for your setups and rerun to obtain th
 
 
 Please let us know if you have any comments/suggestions.
-"If you use this code for your work, please cite the following paper
-Self sustained oscillations of a Nonlinear Optomechanical System in the low excitation regime (https://arxiv.org/abs/2510.01775)"
+If you use this code for your work, please cite the following paper :
+Self sustained oscillations of a Nonlinear Optomechanical System in the low excitation regime (https://arxiv.org/abs/2510.01775).
 
 # License
 This work is released under the Creative Commons Attribution 4.0 International (CC BY 4.0) license. See https://creativecommons.org/licenses/by/4.0/ 
